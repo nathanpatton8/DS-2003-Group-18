@@ -33,30 +33,44 @@ Which position is most at risk? In which conditions?
 
 Analysis per position. Which variables are linked to the most QB injuries?
 
+#Packages 
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(mice)
+```
 
+#Uplaod Data 
+```{r}
+InjuryRecord <- read.csv("InjuryRecord.csv")
+View(InjuryRecord)
+PlayList <- read.csv("PlayList.csv")
+View(PlayList)
+```
 
+#Checking for missing values and cleaning up data 
+```{r}
+#Checking for missing values injury record 
+InjuryRecord[InjuryRecord==""] <- NA
+colSums(is.na(InjuryRecord))
+md.pattern(InjuryRecord, rotate.names = TRUE)
+str(InjuryRecord)
 
+#Checking for missing values playlist 
+PlayList[PlayList==""] <- NA
+colSums(is.na(PlayList))
+md.pattern(PlayList, rotate.names = TRUE)
+str(PlayList)
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#Rename columns and merging table 
+```{r}
+injuries <- inner_join(PlayList, InjuryRecord, by="PlayKey")
+injuries <- select(injuries, -c("PlayerKey.y","GameID.y","Surface"))
+injuries <- injuries %>%
+  rename("PlayerKey" = "PlayerKey.x", "GameID" = "GameID.x")
+View(injuries)
+```
 
 
 
